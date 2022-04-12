@@ -1,3 +1,6 @@
+import 'dotenv/config'
+import ProxyAgent from 'proxy-agent'
+
 import {
   GithubHelper,
   MilestoneImport,
@@ -46,12 +49,16 @@ if (
 const gitlabApi = new Gitlab({
   host: settings.gitlab.url ? settings.gitlab.url : 'http://gitlab.com',
   token: settings.gitlab.token,
+  rejectUnauthorized: false
 });
 
 const MyOctokit = GitHubApi.plugin(throttling);
 
 // Create a GitHub API object
 const githubApi = new MyOctokit({
+  request: { 
+    agent: new ProxyAgent()
+  },
   previews: settings.useIssueImportAPI ? ['golden-comet'] : [],
   debug: false,
   baseUrl: settings.github.apiUrl
